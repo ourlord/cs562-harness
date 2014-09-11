@@ -1,0 +1,20 @@
+#!/usr/bin/python
+#
+# Author: Huanglin "Lincoln" Xiong
+# Email: hxiong@wpi.edu
+# Version: Sep 2014
+#
+# Initialize the harness
+#
+# How to use this:
+#   harness-init
+#
+
+import subprocess
+
+# create directories for the test/history/results
+subprocess.call(["mkdir", "-p", "test", "history", "results"])
+subprocess.call(["mkdir", "-p", "test/new", "test/unclassified", "test/passed", "test/failed", "test/inactive"])
+subprocess.call(["mkdir", "-p", "results/failed", "results/passed", "results/unclassified"])
+# XXX: put all test file to test/new
+subprocess.call(["rm", "./results/failed/*", "./results/passed/*", "./results/unclassified/*"])

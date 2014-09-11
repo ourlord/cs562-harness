@@ -1,0 +1,13 @@
+#!/usr/bin/python
+#
+# Author: Huanglin "Lincoln" Xiong
+# Email: hxiong@wpi.edu
+# Version: Sep 2014
+#
+# Reinitialize/restart the harness
+#
+# How to use this:
+#   harness-restart
+#
+
+import subprocess
