@@ -4,4 +4,72 @@
 # Email: hxiong@wpi.edu
 # Version: Sep 2014
 #
+"""
+Classify test files from test/unclassified/ to test/passed/ or test/failed/.
+Usage:
+    harness-classify-test [-p][-f][-R][-ALL]
+    @param[-p]      Classify the following test files to passed.
+    @param[-f]      Classify the following test files to failed.
+    @param[-R]      Allow 'regular' expression. Actually this works as if naming
+                    'has' the matching pattern.
+    @param[-ALL]    Classify all test files to passed or failed.
+Example:
+    $ harness-classify-test -p -ALL
+    Put all test files to pass.
+    $ harness-classify-test -f test_unit_isTriangle
+    Put test file named "test_unit_isTriangle" to failed.
+    $ harness-classify-test -p -R test_unit_
+    Put all test files naming match 'test_unit_' to passed.
+"""
 
+import os, subprocess, sys
+from lib.History import History
+
+h = History('CLASSIFY')
+test_dir = "./test/unclassified/"
+test_pass_dir = "./test/passed/"
+test_fail_dir = "./test/failed/"
+
+pass_flag = False
+fail_flag = False
+regex_flag = False
+all_flag = False
+
+def take_arg(arg):
+    if arg == '-p':
+        pass_flag = True
+        fail_flag = False
+        regex_flag = False
+        return
+    if arg == '-f':
+        fail_flag = True
+        pass_flag = False
+        regex_flag = False
+        return
+    if arg == '-R':
+        regex_flag = True
+        return
+    if arg == '-ALL':
+        for f in test_dir:
+            classify(f)
+        return
+    if regex_flag:
+        # TODO: tweak this regex functional
+        for f in os.listdir(test_dir):
+            if arg in f:
+                classify(f)
+    else:
+        if arg in os.listdir(test_dir):
+            classify(arg)
+
+def classify(file_name):
+    if pass_flag:
+        subprocess(["mv", test_dir + file_name, test_pass_dir])
+    elif fail_flag:
+        subprocess(["mv", test_dir + file_name, test_fail_dir])
+    else:
+        print "ERROR: invalid operation taken! This might be caused by bringing \
+                in wrong arguments to the command."
+
+for arg in sys.argv:
+    take_arg(arg)

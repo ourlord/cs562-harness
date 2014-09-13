@@ -12,7 +12,8 @@ ENTRY_DICT = {
     'INIT':         1,
     'RESTART':      2,
     'RUN_ALL':      3,
-    'RUN_TEST':     4
+    'RUN_TEST':     4,
+    'CLASSIFY':     5
     }
  
 CUR = "current"

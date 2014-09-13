@@ -9,15 +9,19 @@
 #
 
 import subprocess, os
-import lib.History from History
-import lib from Harness
+from lib.History import History
+from lib import Harness
 
 Harness.initRunAllTest(os.getcwd())
 # History logging here
 h = History("RUN_ALL")
 h.log("Run all the test.")
+test_dir = "./test/new/"
+test_unclassify_dir = "./test/unclassified/"
 
-# TODO: Run each test file in test/new
-# TODO: After running test file, put it into test/unclassified/
-# TODO: Logging the results
+for f in os.listdir(test_dir):
+    h.log("Run test {0}".format(f))
+    # TODO: Run each test file in test/new
+    subprocess.call(["mv", test_dir + f, test_unclassify_dir])
+    # TODO: Logging the results
 

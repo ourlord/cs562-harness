@@ -5,11 +5,51 @@
 # Version: Sep 2014
 #
 
+"""
+Run the test files under test/new/ directory. Put run test files to 
+test/unclassified/ directory.
+Usage:
+    harness-run-test [-R]
+    @param[-R]      Allow 'regular' expression. Actually this works as if naming
+                    'has' the matching pattern.
+Example:
+    $ harness-run-test test_unit_isTriangle
+    Run the single test file test_unit_isTriangle. And put the test file into 
+    test/unclassified/ directory.
+    $ harness-run-test test_unit_isTriangle test_unit_isRound
+    Run the two test files named test_unit_isTriangle and test_unit_isRound. And
+    put them into test/unclassified/ directory.
+    $ harness-run-test -R test_unit_
+    Run test files naming has 'test_unit_' in test/new directory. And put them to
+    test/unclassified/ directory.
+"""
+
 import sys
 from lib.History import History
 from lib import Harness
 
+Harness.initRunAllTest(os.getcwd())
+h = History('RUN_TEST')
+test_dir = "./test/new/"
+test_unclassify_dir = "./test/unclassfied/"
+regex_flag = False
 # Take care of argv
-#if '-R' in sys.argv:
-for k in sys.argv:
-    print k
+for arg in sys.argv:
+    if '-R' == arg:
+        regex_flag = True
+        continue
+    if regex_flag:
+        # TODO: Tweak this regex functional
+        for f in os.listdir(test_dir):
+            if arg in f:
+                h.log("Run test {0}".format(f))
+                # TODO: run the test
+                subprocess.call(["mv", test_dir + f, test_unclassify_dir])
+                # TODO: results logging
+        regex_flag = False
+        continue
+    elif arg in os.listdir(test_dir):
+        h.log("Run test {0}".format(arg))
+        # TODO: run the test
+        subprocess.call(["mv", test_dir + f, test_unclassify_dir])
+        # TODO: results logging

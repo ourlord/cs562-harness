@@ -22,7 +22,7 @@ def initTestFile(cur_dir = "."):
     test_dir = cur_dir + "/test/"
     for directory in os.listdir(test_dir):
         for f in os.listdir(test_dir + directory):
-            subprocess.call(["mv", test_dir + directory + f, test_dir + "/new/"])
+            subprocess.call(["mv", test_dir + directory + "/" + f, test_dir + "/new/"])
 
 def initRunAllTest(cur_dir = "."):
     test_dir = cur_dir + "/test/"
