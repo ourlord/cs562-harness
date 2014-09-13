@@ -4,17 +4,33 @@
 # Email: hxiong@wpi.edu
 # Version: Sep 2014
 #
-# Initialize the harness
+# Initialize the harness. Swiped out all results and history so we have a "pure" 
+# initial harness environment.
 #
 # How to use this:
 #   harness-init
 #
 
-import subprocess
+import subprocess, sys, os
+from lib.History import History
+from lib import Harness
 
 # create directories for the test/history/results
 subprocess.call(["mkdir", "-p", "test", "history", "results"])
-subprocess.call(["mkdir", "-p", "test/new", "test/unclassified", "test/passed", "test/failed", "test/inactive"])
-subprocess.call(["mkdir", "-p", "results/failed", "results/passed", "results/unclassified"])
-# XXX: put all test file to test/new
-subprocess.call(["rm", "./results/failed/*", "./results/passed/*", "./results/unclassified/*"])
+subprocess.call(["mkdir", "-p", "test/new", "test/unclassified", "test/passed", \
+        "test/failed", "test/inactive"])
+subprocess.call(["mkdir", "-p", "results/failed", "results/passed", \
+        "results/unclassified"])
+
+# swiped out all results and history
+Harness.swipeHistory(os.getcwd())
+Harness.swipeResults(os.getcwd())
+
+# add right to access the command
+for f in os.listdir("./"):
+    if "harness-" in f:
+        subprocess.call(["chmod", "+x", f])
+
+# init history
+h = History("INIT")
+h.initFile()

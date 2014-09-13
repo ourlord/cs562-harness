@@ -4,4 +4,20 @@
 # Email: hxiong@wpi.edu
 # Version: Sep 2014
 #
+# Run all the test under test/new
+#
+#
+
+import subprocess, os
+import lib.History from History
+import lib from Harness
+
+Harness.initRunAllTest(os.getcwd())
+# History logging here
+h = History("RUN_ALL")
+h.log("Run all the test.")
+
+# TODO: Run each test file in test/new
+# TODO: After running test file, put it into test/unclassified/
+# TODO: Logging the results
 
