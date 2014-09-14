@@ -4,6 +4,7 @@
 # Email: hxiong@wpi.edu
 # Version: Sep 2014
 #
+
 """
 Classify test files from test/unclassified/ to test/passed/ or test/failed/.
 Usage:
@@ -29,6 +30,9 @@ h = History('CLASSIFY')
 test_dir = "./test/unclassified/"
 test_pass_dir = "./test/passed/"
 test_fail_dir = "./test/failed/"
+result_dir = "./results/unclassified/"
+result_pass_dir = "./results/passed/"
+result_fail_dir = "./results/failed/"
 
 pass_flag = False
 fail_flag = False
@@ -36,6 +40,7 @@ regex_flag = False
 all_flag = False
 
 def take_arg(arg):
+    global pass_flag, fail_flag, regex_flag, all_flag
     if arg == '-p':
         pass_flag = True
         fail_flag = False
@@ -53,23 +58,32 @@ def take_arg(arg):
         for f in test_dir:
             classify(f)
         return
-    if regex_flag:
+    if regex_flag == True:
         # TODO: tweak this regex functional
         for f in os.listdir(test_dir):
             if arg in f:
                 classify(f)
+        regex_flag = False
     else:
         if arg in os.listdir(test_dir):
             classify(arg)
 
 def classify(file_name):
-    if pass_flag:
-        subprocess(["mv", test_dir + file_name, test_pass_dir])
-    elif fail_flag:
-        subprocess(["mv", test_dir + file_name, test_fail_dir])
+    global pass_flag, fail_flag, regex_flag, all_flag
+    if pass_flag == True:
+        subprocess.call(["mv", test_dir + file_name, test_pass_dir])
+        subprocess.call(["mv", result_dir + file_name, result_pass_dir])
+        # TODO: add records in the history file
+        h.log("TEST PASS: \"{0}\"".format(file_name))
+    elif fail_flag == True:
+        subprocess.call(["mv", test_dir + file_name, test_fail_dir])
+        subprocess.call(["mv", result_dir + file_name, result_fail_dir])
+        # TODO: add records in the history file
+        h.log("TEST FAIL: \"{0}\"".format(file_name))
     else:
         print "ERROR: invalid operation taken! This might be caused by bringing \
                 in wrong arguments to the command."
 
 for arg in sys.argv:
     take_arg(arg)
+

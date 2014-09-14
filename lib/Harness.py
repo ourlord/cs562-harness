@@ -21,6 +21,8 @@ def swipeResults(cur_dir = "."):
 def initTestFile(cur_dir = "."):
     test_dir = cur_dir + "/test/"
     for directory in os.listdir(test_dir):
+        if directory == "new":
+            continue
         for f in os.listdir(test_dir + directory):
             subprocess.call(["mv", test_dir + directory + "/" + f, test_dir + "/new/"])
 
@@ -31,3 +33,13 @@ def initRunAllTest(cur_dir = "."):
     if os.listdir(test_dir + "/new/") == "":
         print "ERROR: There is no test files can be run!"
         quit()
+
+def run_test(test_file, counter, cur_dir = "."):
+    test_dir = cur_dir + "/test/new/"
+    test_unclassify_dir = cur_dir + "/test/unclassified/"
+    result_dir = cur_dir + "/results/unclassified/"
+    # run the test file and put the output to the results
+    subprocess.call([test_dir + test_file, ">", result_dir + test_file + "_{0:4d}".format(counter)])
+    # move the test file to unclassified
+    subprocess.call(["mv", test_dir + test_file, test_unclassify_dir])
+

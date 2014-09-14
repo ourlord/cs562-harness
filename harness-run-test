@@ -24,32 +24,29 @@ Example:
     test/unclassified/ directory.
 """
 
-import sys
+import sys, os, subprocess, re
 from lib.History import History
 from lib import Harness
 
 Harness.initRunAllTest(os.getcwd())
 h = History('RUN_TEST')
 test_dir = "./test/new/"
-test_unclassify_dir = "./test/unclassfied/"
 regex_flag = False
 # Take care of argv
 for arg in sys.argv:
     if '-R' == arg:
         regex_flag = True
         continue
-    if regex_flag:
+    if regex_flag == True:
         # TODO: Tweak this regex functional
+        #reg = re.compile(arg)
         for f in os.listdir(test_dir):
+            #if re.search(reg, f) != None:
             if arg in f:
-                h.log("Run test {0}".format(f))
-                # TODO: run the test
-                subprocess.call(["mv", test_dir + f, test_unclassify_dir])
-                # TODO: results logging
+                h.log("TEST RUN \"{0}\"".format(f))
+                Harness.run_test(f)
         regex_flag = False
         continue
     elif arg in os.listdir(test_dir):
-        h.log("Run test {0}".format(arg))
-        # TODO: run the test
-        subprocess.call(["mv", test_dir + f, test_unclassify_dir])
-        # TODO: results logging
+        h.log("TEST RUN \"{0}\"".format(arg))
+        Harness.run_test(f, h.getCounter())

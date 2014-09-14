@@ -36,8 +36,10 @@ class History(object):
             counter_str = f.readline()
             if counter_str.find('\n') != -1:
                 # get current counter 1 greater than the previous one
-                counter = int(counter_str[0 : counter_str.find('\n')]) + 1
+                counter = int(counter_str[0 : counter_str.find('\n')])
                 f.close()
+                if entry == ENTRY_DICT['RESTART']:
+                    counter += 1
             else:
                 # current file is empty in this case, means last time harness might shut incorrectly.
                 # so we need to find the correct counter in the history directory
@@ -61,7 +63,7 @@ class History(object):
             # harness-init, just create a 'current' file and write the log
             subprocess.call(["touch", self.his_dir + CUR])
             f = open(self.his_dir + CUR, 'r+')
-            f.write(str(self.counter) + "\n")
+            f.write("{0:04d}".format(self.counter) + "\n")
             f.close()
             self.log("Initialize harness.")
         elif self.entry == ENTRY_DICT['RESTART']:
@@ -70,19 +72,19 @@ class History(object):
             if CUR in os.listdir(self.his_dir):
                 # change the 'current' file to 'history_'
                 subprocess.call(["mv", self.his_dir + CUR, self.his_dir + "history_" + \
-                        str(self.counter)])
+                        "{0:04d}".format(self.counter)])
                 self.counter += 1
                 # create new 'current'
                 subprocess.call(["touch", self.his_dir + CUR])
                 f = open(self.his_dir + CUR, 'r+')
-                f.write(str(self.counter) + "\n")
+                f.write("{0:04d}".format(self.counter) + "\n")
                 f.close()
                 self.log("Restart/Reinitialize harness.")
         else:
             # we suppose not to be here
             print "ERROR: Wrong entry to initFile()"
 
-    def log(self, log_str):
+    def log(self, log_str) :
         """
         interface for logging in 'current' file
         @param[in]      string      the context of logging information
@@ -90,3 +92,6 @@ class History(object):
         f = open(self.his_dir + CUR, 'a')
         f.write(str(datetime.datetime.now()) + "\t" + log_str + "\n")
         f.close()
+
+    def getCounter():
+        return self.counter

@@ -17,11 +17,8 @@ Harness.initRunAllTest(os.getcwd())
 h = History("RUN_ALL")
 h.log("Run all the test.")
 test_dir = "./test/new/"
-test_unclassify_dir = "./test/unclassified/"
 
 for f in os.listdir(test_dir):
-    h.log("Run test {0}".format(f))
-    # TODO: Run each test file in test/new
-    subprocess.call(["mv", test_dir + f, test_unclassify_dir])
-    # TODO: Logging the results
+    h.log("TEST RUN \"{0}\"".format(f))
+    Harness.run_test(f, h.getCounter())
 
