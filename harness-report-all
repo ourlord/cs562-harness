@@ -5,3 +5,15 @@
 # Version: Sep 2014
 #
 
+"""
+Report all test runs that have been run since the initialization, or reinitialization, of the harness.
+Usage:
+    harness-report-all
+"""
+
+import sys
+from lib.History import History
+
+h = History('REPORT_ALL')
+h.report(True)
+

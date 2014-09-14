@@ -4,6 +4,7 @@
 # Email: hxiong@wpi.edu
 # Version: Sep 2014
 #
+# This library is the api for file movement and creation etc.
 
 import os, subprocess
 
@@ -16,7 +17,7 @@ def swipeResults(cur_dir = "."):
     res_dir = cur_dir + "/results/"
     for directory in os.listdir(res_dir):
         for f in os.listdir(res_dir + directory):
-            os.remove(res_dir + directory + f)
+            os.remove(res_dir + directory + "/" + f)
 
 def initTestFile(cur_dir = "."):
     test_dir = cur_dir + "/test/"
@@ -38,8 +39,14 @@ def run_test(test_file, counter, cur_dir = "."):
     test_dir = cur_dir + "/test/new/"
     test_unclassify_dir = cur_dir + "/test/unclassified/"
     result_dir = cur_dir + "/results/unclassified/"
+    # make test file executable
+    subprocess.call(["chmod", "+x", test_dir + test_file])
     # run the test file and put the output to the results
-    subprocess.call([test_dir + test_file, ">", result_dir + test_file + "_{0:4d}".format(counter)])
+    logfile_name = result_dir + test_file + "_{0:04d}".format(counter)
+    subprocess.call(["touch", logfile_name])
+    with open(logfile_name) as logfile:
+        subprocess.call(test_dir + test_file, shell = True, \
+                stdout = logfile)
     # move the test file to unclassified
     subprocess.call(["mv", test_dir + test_file, test_unclassify_dir])
 

@@ -5,3 +5,41 @@
 # Version: Sep 2014
 #
 
+"""
+Print out a specific test for showing
+Usage:
+    harness-test-show [-R]
+    @param[-R]  optional    Take regex
+"""
+
+import sys, os
+from lib.History import History
+
+regex_flag = False
+test_dir = "./test/"
+
+def print_test(file_name):
+    f = open(file_name, 'r')
+    print file_name + ":"
+    for line in f:
+        print line
+
+for arg in sys.argv:
+    if arg == '--help':
+        print __doc__
+        quit()
+    if arg == '-R':
+        regex_flag = True
+        continue
+    for d in os.listdir(test_dir):
+        cur_dir = test_dir + "/" + d + "/"
+        if regex_flag:
+        # TODO: Tweak in this regex functional
+            for f in os.listdir(cur_dir):
+                if arg in f:
+                    print_test(cur_dir + f)
+        else:
+            if arg in os.listdir(cur_dir):
+                print_test(cur_dir + arg)
+    # reset regex_flag
+    regex_flag = False

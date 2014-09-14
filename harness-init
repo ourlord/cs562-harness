@@ -3,17 +3,20 @@
 # Author: Huanglin "Lincoln" Xiong
 # Email: hxiong@wpi.edu
 # Version: Sep 2014
-#
-# Initialize the harness. Swiped out all results and history so we have a "pure" 
-# initial harness environment.
-#
-# How to use this:
-#   harness-init
-#
+"""
+Initialize the harness. Swiped out all results and history so we have a "pure" harness environment.
+
+Usage:
+  harness-init
+"""
 
 import subprocess, sys, os
 from lib.History import History
 from lib import Harness
+
+if '--help' in sys.argv:
+    print __doc__
+    quit()
 
 # create directories for the test/history/results
 subprocess.call(["mkdir", "-p", "test", "history", "results"])
@@ -25,6 +28,7 @@ subprocess.call(["mkdir", "-p", "results/failed", "results/passed", \
 # swiped out all results and history
 Harness.swipeHistory(os.getcwd())
 Harness.swipeResults(os.getcwd())
+Harness.initTestFile(os.getcwd())
 
 # add right to access the command
 for f in os.listdir("./"):

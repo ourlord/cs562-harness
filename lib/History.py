@@ -8,14 +8,20 @@
 
 import os, datetime, subprocess
 
+# const dictionary to record the entry of history file for further usage
 ENTRY_DICT = {
     'INIT':         1,
     'RESTART':      2,
     'RUN_ALL':      3,
     'RUN_TEST':     4,
-    'CLASSIFY':     5
+    'CLASSIFY':     5,
+    'REPORT_LAST':  6,
+    'REPORT_TEST':  7,
+    'TEST_SHOW':    8,
+    'REPORT_ALL':   9,
+    'ADD_TAGS':     10
     }
- 
+# const string
 CUR = "current"
 
 class History(object):
@@ -36,10 +42,10 @@ class History(object):
             counter_str = f.readline()
             if counter_str.find('\n') != -1:
                 # get current counter 1 greater than the previous one
-                counter = int(counter_str[0 : counter_str.find('\n')])
+                self.counter = int(counter_str[0 : counter_str.find('\n')])
                 f.close()
                 if entry == ENTRY_DICT['RESTART']:
-                    counter += 1
+                    self.counter += 1
             else:
                 # current file is empty in this case, means last time harness might shut incorrectly.
                 # so we need to find the correct counter in the history directory
@@ -57,7 +63,8 @@ class History(object):
 
     def initFile(self):
         """
-        Create a new 'current' file in history directory
+        Create a new 'current' file in history directory.
+        Should be called only by INIT and RESTART.
         """
         if self.entry == ENTRY_DICT['INIT']:
             # harness-init, just create a 'current' file and write the log
@@ -86,12 +93,93 @@ class History(object):
 
     def log(self, log_str) :
         """
-        interface for logging in 'current' file
+        interface for logging in 'current' file.
         @param[in]      string      the context of logging information
         """
         f = open(self.his_dir + CUR, 'a')
         f.write(str(datetime.datetime.now()) + "\t" + log_str + "\n")
         f.close()
 
-    def getCounter():
-        return self.counter
+    def getCounter(self):
+        return int(self.counter)
+    def __getEntry(self):
+        keys = ENTRY_DICT.keys()
+        values = ENTRY_DICT.values()
+        return keys[values.index(self.entry)]
+
+    def report(self, verbose = False, cur_dir = "."):
+        test_dir = cur_dir + "/test/"
+        test_unclassify_dir = test_dir + "unclassified/"
+        test_pass_dir = test_dir + "passed/"
+        test_fail_dir = test_dir + "failed/"
+        test_new_dir = test_dir + "new/"
+        test_inactive_dir = test_dir + "inactive/"
+        test_pass = []
+        test_fail = []
+        test_unclassify = []
+        test_new = []
+        test_inactive = []
+        if self.entry == ENTRY_DICT['REPORT_LAST'] or self.entry == ENTRY_DICT['REPORT_ALL']:
+            for f in os.listdir(test_pass_dir):
+                test_pass.append(f)
+            for f in os.listdir(test_fail_dir):
+                test_fail.append(f)
+            for f in os.listdir(test_unclassify_dir):
+                test_unclassify.append(f)
+            if self.entry != ENTRY_DICT['REPORT_ALL']:
+                for f in os.listdir(test_new_dir):
+                    test_new.append(f)
+                for f in os.listdir(test_inactive_dir):
+                    test_inactive.append(f)
+            out_str = ""
+            if verbose:
+                out_str += "\nPassed: "
+                for i in test_pass:
+                    out_str += i + " "
+                out_str += "\nFailed: "
+                for i in test_fail:
+                    out_str += i + " "
+                out_str += "\nUnclassified: "
+                for i in test_unclassify:
+                    out_str += i + " "
+                if self.entry != ENTRY_DICT['REPORT_ALL']:
+                    out_str += "\nUnrun: "
+                    for i in test_new:
+                        out_str += i + " "
+                    out_str +="\nInactive: "
+                    for i in test_inactive:
+                        out_str += i + " "
+            total = len(test_pass) + len(test_fail) + len(test_unclassify) + len(test_new) +\
+                    len(test_inactive)
+            if self.entry == ENTRY_DICT['REPORT_LAST']:
+                report_str = "{6}: Total test: {0}, Passed: {1}/{0}, Failed: {2}/{0}, Unclassified: {3}/{0}, Unrun: {4}/{0}, Inactive: {5}/{0}.".\
+                        format(total, len(test_pass), len(test_fail), len(test_unclassify), \
+                        len(test_new), len(test_inactive), self.__getEntry())
+            elif self.entry == ENTRY_DICT['REPORT_ALL']:
+                report_str = "{4}: Runned: {0}, Passed: {1}/{0}, Failed: {2}/{0}, Unclassified: {3}/{0}".\
+                        format(total, len(test_pass), len(test_fail), len(test_unclassify), \
+                        self.__getEntry())
+            self.log(report_str 
+                    #+ out_str          # XXX: haven't decided to add this to history file
+                    )
+            print report_str
+            print out_str
+        else:
+            print "ERROR: Wrong entry!"
+            quit()
+
+    def report_test(self, test):
+        if self.entry == ENTRY_DICT['REPORT_TEST']:
+            # XXX: for now, this function just return the corresponding line of history of test
+            for f in os.listdir(self.his_dir):
+                h = open(self.his_dir + f, 'r')
+                out_str = ""
+                for line in h:
+                    if test in line:
+                        out_str += line
+                if out_str != "":
+                    print self.his_dir + f + ":"
+                    print out_str
+        else:
+            print "ERROR: Wrong entry!"
+            quit()

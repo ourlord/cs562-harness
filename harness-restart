@@ -4,26 +4,22 @@
 # Email: hxiong@wpi.edu
 # Version: Sep 2014
 #
-# Reinitialize/restart the harness. Swiped out the results and make the
-# harness back to it init status.
-#
-# How to use this:
-#   harness-restart [-h]
-# @param[-h]: initialize history
-#
+"""
+Reinitialize/restart the harness. Swiped out the results and make the harness back to it init status.
+Usage:
+  harness-restart
+"""
 
 import subprocess, sys, os
 from lib.History import History
 from lib import Harness
 
-# swiped out the results
-Harness.swipeResults(os.getcwd())
+if '--help' in sys.argv:
+    print __doc__
+    quit()
+
 # move test files to test/new
 Harness.initTestFile(os.getcwd())
-
-# if take argument "-h", swiped out history
-if "-h" in sys.argv:
-    Harness.swipeHistory(os.getcwd())
 
 # init history
 h = History("RESTART")

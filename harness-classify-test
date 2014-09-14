@@ -55,7 +55,7 @@ def take_arg(arg):
         regex_flag = True
         return
     if arg == '-ALL':
-        for f in test_dir:
+        for f in os.listdir(test_dir):
             classify(f)
         return
     if regex_flag == True:
@@ -72,13 +72,13 @@ def classify(file_name):
     global pass_flag, fail_flag, regex_flag, all_flag
     if pass_flag == True:
         subprocess.call(["mv", test_dir + file_name, test_pass_dir])
-        subprocess.call(["mv", result_dir + file_name, result_pass_dir])
-        # TODO: add records in the history file
+        subprocess.call(["mv", result_dir + file_name + "_{0:04d}".format(h.getCounter()),\
+                result_pass_dir])
         h.log("TEST PASS: \"{0}\"".format(file_name))
     elif fail_flag == True:
         subprocess.call(["mv", test_dir + file_name, test_fail_dir])
-        subprocess.call(["mv", result_dir + file_name, result_fail_dir])
-        # TODO: add records in the history file
+        subprocess.call(["mv", result_dir + file_name + "_{0:04d}".format(h.getCounter()),\
+                result_fail_dir])
         h.log("TEST FAIL: \"{0}\"".format(file_name))
     else:
         print "ERROR: invalid operation taken! This might be caused by bringing \
