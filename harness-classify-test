@@ -23,7 +23,7 @@ Example:
     Put all test files naming match 'test_unit_' to passed.
 """
 
-import os, subprocess, sys, optparse
+import os, subprocess, sys, re
 from lib.History import History
 
 h = History('CLASSIFY')
@@ -62,9 +62,9 @@ def take_arg(arg):
             classify(f)
         return
     if regex_flag == True:
-        # TODO: tweak this regex functional
+        r = re.compile(arg)
         for f in os.listdir(test_dir):
-            if arg in f:
+            if r.match(f):
                 classify(f)
         regex_flag = False
     else:
