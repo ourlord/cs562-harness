@@ -4,22 +4,17 @@
 # Email: hxiong@wpi.edu
 # Version: Sep 2014
 #
-"""
-Reinitialize/restart the harness. Swiped out the results and make the harness back to it init status.
-Usage:
-  harness-restart
-"""
 
 import subprocess, sys, os, optparse
 from lib.History import History
 from lib import Harness
 
 def main():
-    p = optparse.OptionParser()
+    p = optparse.OptionParser(description='Reinitialize/restart the harness.'
+        'Swiped out the results and make the harness back to it init status.')
     options, arguments = p.parse_args()
     # move test files to test/new
     Harness.initTestFile(os.getcwd())
-    
     # init history
     h = History("RESTART")
     h.initFile()

@@ -35,7 +35,7 @@ def initRunAllTest(cur_dir = "."):
         print "ERROR: There is no test files can be run!"
         quit()
 
-def run_test(test_file, counter, cur_dir = "."):
+def run_test(test_file, counter, cur_dir = os.getcwd()):
     test_dir = cur_dir + "/test/new/"
     test_unclassify_dir = cur_dir + "/test/unclassified/"
     result_dir = cur_dir + "/results/unclassified/"
@@ -44,9 +44,11 @@ def run_test(test_file, counter, cur_dir = "."):
     # run the test file and put the output to the results
     logfile_name = "{0}{1}_{2:04d}".format(result_dir, test_file, counter)
     subprocess.call(["touch", logfile_name])
-    cur_dir = os.getcwd()
     with open(logfile_name, 'r+') as logfile:
+        os.chdir(test_dir)
+        # XXX: do we need to catch any shell exception?
         subprocess.call([test_dir + test_file], stdout = logfile)
+    os.chdir(cur_dir)
     # move the test file to unclassified
     subprocess.call(["mv", test_dir + test_file, test_unclassify_dir])
 

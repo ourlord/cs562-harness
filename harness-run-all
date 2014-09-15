@@ -4,9 +4,6 @@
 # Email: hxiong@wpi.edu
 # Version: Sep 2014
 #
-# Run all the test under test/new
-#
-#
 
 import subprocess, os, sys, optparse
 from lib.History import History

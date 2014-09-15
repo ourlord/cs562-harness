@@ -24,37 +24,38 @@ Example:
     test/unclassified/ directory.
 """
 
-import sys, os, subprocess, re
+import os, re, optparse
 from lib.History import History
 from lib import Harness
 
-Harness.initRunAllTest(os.getcwd())
-h = History('RUN_TEST')
 test_dir = "./test/new/"
-regex_flag = False
 def main():
-    global h, regex_flag
-    # Take care of argv
-    for arg in sys.argv:
-        if '--help' == arg:
-            print __doc__
-            quit()
-        if '-R' == arg:
-            regex_flag = True
-            continue
-        if regex_flag == True:
-            # TODO: Tweak this regex functional
-            #reg = re.compile(arg)
-            for f in os.listdir(test_dir):
-                #if re.search(reg, f) != None:
-                if arg in f:
-                    h.log("TEST RUN \"{0}\"".format(f))
-                    Harness.run_test(f, h.getCounter(), os.getcwd())
-            regex_flag = False
-            continue
-        elif arg in os.listdir(test_dir):
-            h.log("TEST RUN \"{0}\"".format(arg))
-            Harness.run_test(f, h.getCounter(), os.getcwd())
+    test_list = []
+    h = History('RUN_TEST')
+    p = optparse.OptionParser(description='')
+    p.add_option('-R', dest='regex', \
+            help='allow and take one following regular expression')
+    options, arguments = p.parse_args()
+    Harness.initRunAllTest(os.getcwd())
+    if options.regex:
+        try:
+            r = re.compile(options.regex)
+        except:
+            p.error("Incorrect regular expression taken!")
+        for f in os.listdir(test_dir):
+            if r.match(f):
+                if f not in test_list:
+                    test_list.append(f)
+    for arg in arguments:
+        if arg in os.listdir(test_dir):
+            if arg not in test_list:
+                test_list.append(arg)
+    for test in test_list:
+        print "Run test: {0}".format(test)
+        h.log("TEST RUN \"{0}\"".format(test))
+        Harness.run_test(test, h.getCounter(), os.getcwd())
+    if test_list == []:
+        print "No test found"
 
 if __name__ == '__main__':
     main()
