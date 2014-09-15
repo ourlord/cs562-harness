@@ -5,59 +5,52 @@
 # Version: Sep 2014
 #
 
-"""
-Show the difference between a previous result and the current result. By default will return difference in last time results and current results.
-Usage:
-    harness-result-diff [-c] <index> [-R] <test>
-    @param[-R] optional     allow regex
-    @param[-c] optional     following by the index of results previously stored in harness
-"""
-
 import os, optparse, re
+from lib.History import History
 
 def main():
     result_dir = "./results/"
     h = History('DIFF')
     current_counter = h.getCounter()
-    pre_counter = current_counter - 1
     fp_list = []
     fc_list = []
-    for arg in sys.argv:
-        if '--help' == arg:
-            print __doc__
-            quit()
-        if '-R' == arg:
-            regex_flag = True
-            continue
-        if '-c' == arg:
-            c_flag = True
-            continue
-        if c_flag:
-            c_flag = False
-            pre_counter = int(arg)
-            continue
-        if regex_flag:
-            # TODO: Tweak this regex functional
-            for d in os.listdir(result_dir):
-                for f in os.listdir(result_dir + d):
-                    if arg in f:
-                        if "_{0:04d}".format(pre_counter) in f:
-                            fp = open(result_dir + d + "/" + f, 'r')
-                            fp_list.append(fp)
-                        elif "_{0:04d}".format(current_counter) in f:
-                            fc = open(result_dir + d + "/" + f, 'r')
-                            fc_list.append(fc)
-        else:
-            for d in os.listdir(result_dir):
-                file_name = "{0}_{1:04d}".format(arg, pre_counter)
-                file_cur = "{0}_{1:04d}".format(arg, current_counter)
-                if file_name in os.listdir(result_dir + d):
-                    fp = open(result_dir + d + "/" + file_name, 'r')
-                    fp_list.append(fp)
-                elif file_cur in os.listdir(result_dir + d):
-                    fc = open(result_dir + d + "/" + file_cur, 'r')
-                    fc_list.append(fc)
+    p = optparse.OptionParser(description='Show the difference between a previous' 
+            ' result and the current result. By default will return difference' 
+            ' in the time results and current results.')
+    p.add_option('-R', dest='regex', \
+            help = 'allow and take one following regular expression')
+    p.add_option('-i', '--index', dest='index', \
+            type='int', default=current_counter-1, \
+            help='index of results to show the diff from the current results.')
+    options, arguments = p.parse_args()
+    if options.regex:
+        try:
+            r = re.compile(options.regex)
+        except:
+            p.error("Incorrect regular expression taken!")
+        for d in os.listdir(result_dir):
+            for f in os.listdir(result_dir + d):
+                if r.match(f):
+                    if "_{0:04d}".format(options.index) in f:
+                        fp = open(result_dir + d + "/" + f, 'r')
+                        fp_list.append(fp)
+                    elif "_{0:04d}".format(current_counter) in f:
+                        fc = open(result_dir + d + "/" + f, 'r')
+                        fc_list.append(fc)
+    for arg in arguments:
+        for d in os.listdir(result_dir):
+            file_pre = "{0}_{1:04d}".format(arg, options.index)
+            file_cur = "{0}_{1:04d}".format(arg, current_counter)
+            if file_pre in os.listdir(result_dir + d):
+                fp = open(result_dir + d + "/" + file_pre, 'r')
+                fp_list.append(fp)
+            elif file_cur in os.listdir(result_dir + d):
+                fc = open(result_dir + d + "/" + file_cur, 'r')
+                fc_list.append(fc)
     # now we have a list of files to diff
+    if (fp_list, fc_list) == ([], []):
+        print "===== No result found ====="
+        return
     for fp, fc in zip(fp_list, fc_list):
         out_str = ""
         line_no = 0
