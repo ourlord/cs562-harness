@@ -9,13 +9,12 @@ import subprocess, os, sys, optparse
 from lib.History import History
 from lib import Harness
 
+test_dir = "./test/new/"
 def main():
     Harness.initRunAllTest(os.getcwd())
     # History logging here
     h = History("RUN_ALL")
     h.log("Run all the test.")
-    test_dir = "./test/new/"
-    
     p = optparse.OptionParser(description='Run all test under test/new/.' 
         ' Record result in results/. Put all runned test files to test/unclassified/.')
     options, arguments = p.parse_args()
