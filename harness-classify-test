@@ -41,7 +41,7 @@ all_flag = False
  
 def take_arg(arg):
     global pass_flag, fail_flag, regex_flag, all_flag
-    if arg == '--help':
+    if arg == '--help' or arg == '-h':
         print __doc__
         quit()
     if arg == '-p':
