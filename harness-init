@@ -19,6 +19,8 @@ def main():
             "test/failed", "test/inactive"])
     subprocess.call(["mkdir", "-p", "results/failed", "results/passed", \
             "results/unclassified"])
+    # FIX: defect #001: running teacher given test files failure
+    subprocess.call(["mkdir", "-p", "temp"])
     # remove and recreate test_tag file
     subprocess.call(["rm", ".test_tag"])
     subprocess.call(["touch", ".test_tag"])

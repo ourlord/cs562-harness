@@ -23,7 +23,7 @@ Example:
     Put all test files naming match 'test_unit_' to passed.
 """
 
-import os, subprocess, sys, re
+import os, subprocess, sys, re#, optparse
 from lib.History import History
 
 h = History('CLASSIFY')
@@ -88,7 +88,7 @@ def classify(file_name):
                 in wrong arguments to the command."
 
 def main():
-    p = optparse.OptionParser(description='')
+    #p = optparse.OptionParser(description='')
     #options, arguments = p.parse_args()
     for arg in sys.argv:
         take_arg(arg)
