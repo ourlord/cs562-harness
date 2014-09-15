@@ -19,7 +19,8 @@ ENTRY_DICT = {
     'REPORT_TEST':  7,
     'TEST_SHOW':    8,
     'REPORT_ALL':   9,
-    'ADD_TAGS':     10
+    'ADD_TAGS':     10,
+    'DIFF':         11
     }
 # const string
 CUR = "current"
@@ -171,15 +172,18 @@ class History(object):
     def report_test(self, test):
         if self.entry == ENTRY_DICT['REPORT_TEST']:
             # XXX: for now, this function just return the corresponding line of history of test
+            print "===== Generate report for test {0} =====".format(test)
             for f in os.listdir(self.his_dir):
                 h = open(self.his_dir + f, 'r')
                 out_str = ""
+                line_no = 0
                 for line in h:
+                    line_no += 1
                     if test in line:
-                        out_str += line
+                        out_str += "@{0}:    {1}".format(line_no, line)
                 if out_str != "":
                     print self.his_dir + f + ":"
-                    print out_str
+                    print out_str,
         else:
             print "ERROR: Wrong entry!"
             quit()

@@ -10,17 +10,19 @@ Usage:
   harness-restart
 """
 
-import subprocess, sys, os
+import subprocess, sys, os, optparse
 from lib.History import History
 from lib import Harness
 
-if '--help' in sys.argv:
-    print __doc__
-    quit()
+def main():
+    p = optparse.OptionParser()
+    options, arguments = p.parse_args()
+    # move test files to test/new
+    Harness.initTestFile(os.getcwd())
+    
+    # init history
+    h = History("RESTART")
+    h.initFile()
 
-# move test files to test/new
-Harness.initTestFile(os.getcwd())
-
-# init history
-h = History("RESTART")
-h.initFile()
+if __name__ == '__main__':
+    main()

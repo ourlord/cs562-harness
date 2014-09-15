@@ -32,21 +32,28 @@ Harness.initRunAllTest(os.getcwd())
 h = History('RUN_TEST')
 test_dir = "./test/new/"
 regex_flag = False
-# Take care of argv
-for arg in sys.argv:
-    if '-R' == arg:
-        regex_flag = True
-        continue
-    if regex_flag == True:
-        # TODO: Tweak this regex functional
-        #reg = re.compile(arg)
-        for f in os.listdir(test_dir):
-            #if re.search(reg, f) != None:
-            if arg in f:
-                h.log("TEST RUN \"{0}\"".format(f))
-                Harness.run_test(f)
-        regex_flag = False
-        continue
-    elif arg in os.listdir(test_dir):
-        h.log("TEST RUN \"{0}\"".format(arg))
-        Harness.run_test(f, h.getCounter())
+def main():
+    # Take care of argv
+    for arg in sys.argv:
+        if '--help' == arg:
+            print __doc__
+            quit()
+        if '-R' == arg:
+            regex_flag = True
+            continue
+        if regex_flag == True:
+            # TODO: Tweak this regex functional
+            #reg = re.compile(arg)
+            for f in os.listdir(test_dir):
+                #if re.search(reg, f) != None:
+                if arg in f:
+                    h.log("TEST RUN \"{0}\"".format(f))
+                    Harness.run_test(f, h.getCounter(), os.getcwd())
+            regex_flag = False
+            continue
+        elif arg in os.listdir(test_dir):
+            h.log("TEST RUN \"{0}\"".format(arg))
+            Harness.run_test(f, h.getCounter(), os.getcwd())
+
+if __name__ == '__main__':
+    main()

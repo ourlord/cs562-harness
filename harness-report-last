@@ -4,20 +4,19 @@
 # Email: hxiong@wpi.edu
 # Version: Sep 2014
 #
+# 
 
-"""
-Report the results of last time harness execution(actually current...?).
-Usage:
-    harness-report-last [-V]
-    @param[-V]      Turn on the verbose output
-"""
-
-import sys
+import sys, optparse
 from lib.History import History
 
-h = History('REPORT_LAST')
-verbose = False
-if '-V' in sys.argv:
-    verbose = True
-h.report(verbose)
+def main():
+    h = History('REPORT_LAST')
+    p = optparse.OptionParser(description='Report the results of last time' 
+        'harness execution(actually current...?).')
+    p.add_option('-V', '--verbose', action='store_true', dest='verbose', \
+            help='turn on the verbose output')
+    options, arguments = p.parse_args()
+    h.report(options.verbose)
 
+if __name__ == '__main__':
+    main()

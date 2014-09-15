@@ -12,31 +12,40 @@ Usage:
     @param[-R] optional     Allow regex
 """
 
-import sys, os
+import sys, os, optparse
 from lib.History import History
 
-regex_flag = False
 h = History('REPORT_TEST')
 test_list = []
-for arg in sys.argv:
-    if '--help' == arg:
-        print __doc__
-        quit()
-    if '-R' == arg:
-        regex_flag = True
-        continue
-    for d in os.listdir("./test/"):
-        if regex_flag:
-            # TODO: Tweak this regex functional
-            for f in os.listdir("./test/" + d):
-                if arg in f:
-                    if f not in test_list:
-                        test_list.append(f)
-        else:
-            if arg in os.listdir("./test/" + d):
-                if arg not in test_list:
-                    test_list.append(arg)
-    for test in test_list:
-        h.report_test(test)
-    # reset regex_flag
-    regex_flag = False
+def main():
+    global h, test_list
+    p = optparse.OptionParser(description='Report on history of a specific test or'
+            'a set of test.')
+    p.add_option('-R', dest='regex', \
+            help="allow and take one following regular expression")
+    #options, arguments = p.parse_args()
+    for arg in sys.argv:
+        if '--help' == arg:
+            print __doc__
+            quit()
+        if '-R' == arg:
+            regex_flag = True
+            continue
+        for d in os.listdir("./test/"):
+            if regex_flag:
+                # TODO: Tweak this regex functional
+                for f in os.listdir("./test/" + d):
+                    if arg in f:
+                        if f not in test_list:
+                            test_list.append(f)
+            else:
+                if arg in os.listdir("./test/" + d):
+                    if arg not in test_list:
+                        test_list.append(arg)
+        for test in test_list:
+            h.report_test(test)
+        # reset regex_flag
+        regex_flag = False
+
+if __name__ == '__main__':
+    main()

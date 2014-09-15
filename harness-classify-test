@@ -23,7 +23,7 @@ Example:
     Put all test files naming match 'test_unit_' to passed.
 """
 
-import os, subprocess, sys
+import os, subprocess, sys, optparse
 from lib.History import History
 
 h = History('CLASSIFY')
@@ -38,9 +38,12 @@ pass_flag = False
 fail_flag = False
 regex_flag = False
 all_flag = False
-
+ 
 def take_arg(arg):
     global pass_flag, fail_flag, regex_flag, all_flag
+    if arg == '--help':
+        print __doc__
+        quit()
     if arg == '-p':
         pass_flag = True
         fail_flag = False
@@ -84,6 +87,11 @@ def classify(file_name):
         print "ERROR: invalid operation taken! This might be caused by bringing \
                 in wrong arguments to the command."
 
-for arg in sys.argv:
-    take_arg(arg)
+def main():
+    p = optparse.OptionParser(description='')
+    #options, arguments = p.parse_args()
+    for arg in sys.argv:
+        take_arg(arg)
 
+if __name__ == '__main__':
+    main()

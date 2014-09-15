@@ -5,41 +5,41 @@
 # Version: Sep 2014
 #
 
-"""
-Print out a specific test for showing
-Usage:
-    harness-test-show [-R]
-    @param[-R]  optional    Take regex
-"""
-
-import sys, os
+import sys, os, re, optparse
 from lib.History import History
 
-regex_flag = False
 test_dir = "./test/"
 
 def print_test(file_name):
     f = open(file_name, 'r')
     print file_name + ":"
     for line in f:
-        print line
+        print line,
 
-for arg in sys.argv:
-    if arg == '--help':
-        print __doc__
-        quit()
-    if arg == '-R':
-        regex_flag = True
-        continue
+def find_test(file_name, optparser, regex=False):
     for d in os.listdir(test_dir):
         cur_dir = test_dir + "/" + d + "/"
-        if regex_flag:
-        # TODO: Tweak in this regex functional
+        if regex:
+            try:
+                r = re.compile(file_name)
+            except:
+                optparser.error("Incorrect regular expression taken!")
             for f in os.listdir(cur_dir):
-                if arg in f:
+                if r.match(f):
                     print_test(cur_dir + f)
         else:
-            if arg in os.listdir(cur_dir):
-                print_test(cur_dir + arg)
-    # reset regex_flag
-    regex_flag = False
+            if file_name in os.listdir(cur_dir):
+                print_test(cur_dir + file_name)
+ 
+def main():
+    p = optparse.OptionParser(description='Print out a specific test for showing')
+    p.add_option('-R', dest='regex', \
+            help='allow and take one following regular expression')
+    options, arguments = p.parse_args()
+    if options.regex:
+        find_test(options.regex, p, True)
+    for arg in arguments:
+        find_test(arg, p)
+
+if __name__ == '__main__':
+    main()

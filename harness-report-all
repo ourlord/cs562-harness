@@ -5,15 +5,16 @@
 # Version: Sep 2014
 #
 
-"""
-Report all test runs that have been run since the initialization, or reinitialization, of the harness.
-Usage:
-    harness-report-all
-"""
-
-import sys
+import sys, optparse
 from lib.History import History
 
-h = History('REPORT_ALL')
-h.report(True)
+def main():
+    p = optparse.OptionParser(description='Report all test runs that have'
+            ' been run since the initialization, or reinitialization, of'
+            ' the harness.')
+    options, arguments = p.parse_args()
+    h = History('REPORT_ALL')
+    h.report(True)
 
+if __name__ == '__main__':
+    main()

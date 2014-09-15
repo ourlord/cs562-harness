@@ -42,11 +42,11 @@ def run_test(test_file, counter, cur_dir = "."):
     # make test file executable
     subprocess.call(["chmod", "+x", test_dir + test_file])
     # run the test file and put the output to the results
-    logfile_name = result_dir + test_file + "_{0:04d}".format(counter)
+    logfile_name = "{0}{1}_{2:04d}".format(result_dir, test_file, counter)
     subprocess.call(["touch", logfile_name])
-    with open(logfile_name) as logfile:
-        subprocess.call(test_dir + test_file, shell = True, \
-                stdout = logfile)
+    cur_dir = os.getcwd()
+    with open(logfile_name, 'r+') as logfile:
+        subprocess.call([test_dir + test_file], stdout = logfile)
     # move the test file to unclassified
     subprocess.call(["mv", test_dir + test_file, test_unclassify_dir])
 
