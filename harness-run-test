@@ -33,6 +33,7 @@ h = History('RUN_TEST')
 test_dir = "./test/new/"
 regex_flag = False
 def main():
+    global h, regex_flag
     # Take care of argv
     for arg in sys.argv:
         if '--help' == arg:
