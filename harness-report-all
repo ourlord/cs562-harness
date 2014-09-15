@@ -5,7 +5,7 @@
 # Version: Sep 2014
 #
 
-import sys, optparse
+import optparse
 from lib.History import History
 
 def main():

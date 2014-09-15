@@ -5,7 +5,7 @@
 # Version: Sep 2014
 #
 
-import subprocess, sys, os, optparse
+import os, optparse
 from lib.History import History
 from lib import Harness
 

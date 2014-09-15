@@ -5,25 +5,6 @@
 # Version: Sep 2014
 #
 
-"""
-Run the test files under test/new/ directory. Put run test files to 
-test/unclassified/ directory.
-Usage:
-    harness-run-test [-R]
-    @param[-R]      Allow 'regular' expression. Actually this works as if naming
-                    'has' the matching pattern.
-Example:
-    $ harness-run-test test_unit_isTriangle
-    Run the single test file test_unit_isTriangle. And put the test file into 
-    test/unclassified/ directory.
-    $ harness-run-test test_unit_isTriangle test_unit_isRound
-    Run the two test files named test_unit_isTriangle and test_unit_isRound. And
-    put them into test/unclassified/ directory.
-    $ harness-run-test -R test_unit_
-    Run test files naming has 'test_unit_' in test/new directory. And put them to
-    test/unclassified/ directory.
-"""
-
 import os, re, optparse
 from lib.History import History
 from lib import Harness
@@ -32,7 +13,8 @@ test_dir = "./test/new/"
 def main():
     test_list = []
     h = History('RUN_TEST')
-    p = optparse.OptionParser(description='')
+    p = optparse.OptionParser(description='Run the test files under test/new directory. '
+        'Put run test files to test/unclassified directory.')
     p.add_option('-R', dest='regex', \
             help='allow and take one following regular expression')
     options, arguments = p.parse_args()
@@ -50,12 +32,13 @@ def main():
         if arg in os.listdir(test_dir):
             if arg not in test_list:
                 test_list.append(arg)
+    if test_list == []:
+        print "====== No test found ====="
+        return
     for test in test_list:
-        print "Run test: {0}".format(test)
+        print "====== Run test: {0} =====".format(test)
         h.log("TEST RUN \"{0}\"".format(test))
         Harness.run_test(test, h.getCounter(), os.getcwd())
-    if test_list == []:
-        print "No test found"
 
 if __name__ == '__main__':
     main()

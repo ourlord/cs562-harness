@@ -4,7 +4,7 @@
 # Email: hxiong@wpi.edu
 # Version: Sep 2014
 #
-import sys, os, optparse, re
+import os, optparse, re
 from lib.History import History
 
 h = History('REPORT_TEST')

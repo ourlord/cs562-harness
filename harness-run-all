@@ -5,7 +5,7 @@
 # Version: Sep 2014
 #
 
-import subprocess, os, sys, optparse
+import os, optparse
 from lib.History import History
 from lib import Harness
 
@@ -18,7 +18,11 @@ def main():
     p = optparse.OptionParser(description='Run all test under test/new/.' 
         ' Record result in results/. Put all runned test files to test/unclassified/.')
     options, arguments = p.parse_args()
+    if os.listdir(test_dir) == []:
+        print "===== No test can be run ======"
+        return
     for f in os.listdir(test_dir):
+        print "===== Run test: {0} ======".format(f)
         h.log("TEST RUN \"{0}\"".format(f))
         Harness.run_test(f, h.getCounter(), os.getcwd())
     

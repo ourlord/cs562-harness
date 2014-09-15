@@ -13,61 +13,62 @@ Usage:
     @param[-c] optional     following by the index of results previously stored in harness
 """
 
-import sys, os
-from lib.History import History
+import os, optparse, re
 
-h = History('DIFF')
-result_dir = "./results/"
-current_counter = h.getCounter()
-pre_counter = current_counter - 1
-regex_flag = False
-c_flag = False
-fp_list = []
-fc_list = []
-for arg in sys.argv:
-    if '--help' == arg:
-        print __doc__
-        quit()
-    if '-R' == arg:
-        regex_flag = True
-        continue
-    if '-c' == arg:
-        c_flag = True
-        continue
-    if c_flag:
-        c_flag = False
-        pre_counter = int(arg)
-        continue
-    if regex_flag:
-        # TODO: Tweak this regex functional
-        for d in os.listdir(result_dir):
-            for f in os.listdir(result_dir + d):
-                if arg in f:
-                    if "_{0:04d}".format(pre_counter) in f:
-                        fp = open(result_dir + d + "/" + f, 'r')
-                        fp_list.append(fp)
-                    elif "_{0:04d}".format(current_counter) in f:
-                        fc = open(result_dir + d + "/" + f, 'r')
-                        fc_list.append(fc)
-    else:
-        for d in os.listdir(result_dir):
-            file_name = "{0}_{1:04d}".format(arg, pre_counter)
-            file_cur = "{0}_{1:04d}".format(arg, current_counter)
-            if file_name in os.listdir(result_dir + d):
-                fp = open(result_dir + d + "/" + file_name, 'r')
-                fp_list.append(fp)
-            elif file_cur in os.listdir(result_dir + d):
-                fc = open(result_dir + d + "/" + file_cur, 'r')
-                fc_list.append(fc)
-# now we have a list of files to diff
-for fp, fc in zip(fp_list, fc_list):
-    out_str = ""
-    line_no = 0
-    for linep, linec in zip(fp, fc):
-        line_no += 1
-        if linep != linec:
-            out_str += "@{0}:-\t{1}".format(line_no, linep)
-            out_str += "@{0}:+\t{1}".format(line_no, linec)
-    if out_str != "":
-        print "===== Diff in {0} and {1} ======".format(fp.name, fc.name)
-        print out_str
+def main():
+    result_dir = "./results/"
+    h = History('DIFF')
+    current_counter = h.getCounter()
+    pre_counter = current_counter - 1
+    fp_list = []
+    fc_list = []
+    for arg in sys.argv:
+        if '--help' == arg:
+            print __doc__
+            quit()
+        if '-R' == arg:
+            regex_flag = True
+            continue
+        if '-c' == arg:
+            c_flag = True
+            continue
+        if c_flag:
+            c_flag = False
+            pre_counter = int(arg)
+            continue
+        if regex_flag:
+            # TODO: Tweak this regex functional
+            for d in os.listdir(result_dir):
+                for f in os.listdir(result_dir + d):
+                    if arg in f:
+                        if "_{0:04d}".format(pre_counter) in f:
+                            fp = open(result_dir + d + "/" + f, 'r')
+                            fp_list.append(fp)
+                        elif "_{0:04d}".format(current_counter) in f:
+                            fc = open(result_dir + d + "/" + f, 'r')
+                            fc_list.append(fc)
+        else:
+            for d in os.listdir(result_dir):
+                file_name = "{0}_{1:04d}".format(arg, pre_counter)
+                file_cur = "{0}_{1:04d}".format(arg, current_counter)
+                if file_name in os.listdir(result_dir + d):
+                    fp = open(result_dir + d + "/" + file_name, 'r')
+                    fp_list.append(fp)
+                elif file_cur in os.listdir(result_dir + d):
+                    fc = open(result_dir + d + "/" + file_cur, 'r')
+                    fc_list.append(fc)
+    # now we have a list of files to diff
+    for fp, fc in zip(fp_list, fc_list):
+        out_str = ""
+        line_no = 0
+        for linep, linec in zip(fp, fc):
+            line_no += 1
+            if linep != linec:
+                out_str += "@{0}:-\t{1}".format(line_no, linep)
+                out_str += "@{0}:+\t{1}".format(line_no, linec)
+        if out_str != "":
+            print "===== Diff in {0} and {1} ======".format(fp.name, fc.name)
+            print out_str
+
+if __name__ == '__main__':
+    main()

@@ -5,7 +5,7 @@
 # Version: Sep 2014
 #
 
-import sys, os, re, optparse
+import os, re, optparse
 from lib.History import History
 
 test_dir = "./test/"
