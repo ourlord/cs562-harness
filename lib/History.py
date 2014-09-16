@@ -169,21 +169,35 @@ class History(object):
             print "ERROR: Wrong entry!"
             quit()
 
-    def report_test(self, test):
+    def report_test(self, test, detail = False):
         if self.entry == ENTRY_DICT['REPORT_TEST']:
             # XXX: for now, this function just return the corresponding line of history of test
             print "===== Generate report for test {0} =====".format(test)
+            num_run = 0
+            num_pass = 0
+            num_fail = 0
             for f in os.listdir(self.his_dir):
                 h = open(self.his_dir + f, 'r')
                 out_str = ""
                 line_no = 0
                 for line in h:
                     line_no += 1
-                    if test in line:
+                    if "\"{0}\"".format(test) in line:
                         out_str += "@{0}:    {1}".format(line_no, line)
+                        if 'TEST RUN:' in line:
+                            num_run += 1
+                        elif 'TEST PASS:' in line:
+                            num_pass += 1
+                        elif 'TEST FAIL:' in line:
+                            num_fail += 1
                 if out_str != "":
                     print self.his_dir + f + ":"
                     print out_str,
+            # add this feature to show how many times this test ran, passed, failed
+            if detail:
+                print "{0} runs {1} times, pass {2} times, fail {3} times.".format(test, num_run, \
+                        num_pass, num_fail)
+
         else:
             print "ERROR: Wrong entry!"
             quit()

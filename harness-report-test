@@ -33,13 +33,15 @@ def main():
             'a set of test.')
     p.add_option('-R', dest='regex', \
             help="allow and take one following regular expression")
+    p.add_option('-s', '--status', action='store_true', dest='status', \
+            help="to show the status of the test")
     options, arguments = p.parse_args()
     if options.regex:
         report_test(options.regex, p, True)
     for arg in arguments:
         report_test(arg, p)
     for test in test_list:
-        h.report_test(test)
+        h.report_test(test, options.status)
 
 if __name__ == '__main__':
     main()

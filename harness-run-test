@@ -37,7 +37,7 @@ def main():
         return
     for test in test_list:
         print "====== Run test: {0} =====".format(test)
-        h.log("TEST RUN \"{0}\"".format(test))
+        h.log("TEST RUN: \"{0}\"".format(test))
         Harness.run_test(test, h.getCounter(), os.getcwd())
 
 if __name__ == '__main__':

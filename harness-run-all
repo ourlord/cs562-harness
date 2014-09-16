@@ -23,7 +23,7 @@ def main():
         return
     for f in os.listdir(test_dir):
         print "===== Run test: {0} ======".format(f)
-        h.log("TEST RUN \"{0}\"".format(f))
+        h.log("TEST RUN: \"{0}\"".format(f))
         Harness.run_test(f, h.getCounter(), os.getcwd())
     
 if __name__ == '__main__':
