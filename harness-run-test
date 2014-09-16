@@ -17,6 +17,8 @@ def main():
         'Put run test files to test/unclassified directory.')
     p.add_option('-R', dest='regex', \
             help='allow and take one following regular expression')
+    p.add_option('-V', '--verbose', action='store_true', dest='verbose', \
+            help='turn on the verbose output')
     options, arguments = p.parse_args()
     Harness.initRunAllTest(os.getcwd())
     if options.regex:
@@ -38,7 +40,7 @@ def main():
     for test in test_list:
         print "====== Run test: {0} =====".format(test)
         h.log("TEST RUN: \"{0}\"".format(test))
-        Harness.run_test(test, h.getCounter(), os.getcwd())
+        Harness.run_test(test, h.getCounter(), options.verbose, os.getcwd())
 
 if __name__ == '__main__':
     main()
