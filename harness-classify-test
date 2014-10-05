@@ -75,11 +75,13 @@ def classify(file_name):
     global pass_flag, fail_flag, regex_flag, all_flag
     if pass_flag == True:
         subprocess.call(["mv", test_dir + file_name, test_pass_dir])
+        # TODO: here is a defect for moving test result
         subprocess.call(["mv", result_dir + file_name + "_{0:04d}".format(h.getCounter())+"*",\
                 result_pass_dir])
         h.log("TEST PASS: \"{0}\"".format(file_name))
     elif fail_flag == True:
         subprocess.call(["mv", test_dir + file_name, test_fail_dir])
+        # TODO: here is a defect for moving test result
         subprocess.call(["mv", result_dir + file_name + "_{0:04d}".format(h.getCounter())+"*",\
                 result_fail_dir])
         h.log("TEST FAIL: \"{0}\"".format(file_name))
