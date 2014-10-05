@@ -35,14 +35,30 @@ def initRunAllTest(cur_dir = "."):
         print "ERROR: There is no test files can be run!"
         quit()
 
-def run_test(test_file, counter, verbose = False, cur_dir = os.getcwd()):
-    test_dir = cur_dir + "/test/new/"
+def run_test(test_file, counter, test_kind = "new", verbose = False, cur_dir = os.getcwd()):
+    test_dir = cur_dir + "/test/" + test_kind + "/"
     test_unclassify_dir = cur_dir + "/test/unclassified/"
-    result_dir = cur_dir + "/results/unclassified/"
+    test_time = 1
+    if test_kind == "new":
+        result_dir = cur_dir + "/results/unclassified/"
+    else:
+        if test_kind == "passed":
+            result_dir = cur_dir + "/results/passed/"
+        elif test_kind == "failed":
+            result_dir = cur_dir + "/results/failed/"
+        elif test_kind == "unclassified":
+            result_dir = cur_dir + "/results/unclassified"
+        else:
+            print "FATAL: Wrong test kind...Harness Abort!"
+            return
+        # get the correct test time
+        for f in os.listdir(result_dir):
+            if "{0}_{1:04d}_".format(test_file, counter) in f:
+                test_time = int(f[f.rfind("_")+1:]) + 1
     # make test file executable
     subprocess.call(["chmod", "+x", test_dir + test_file])
     # run the test file and put the output to the results
-    logfile_name = "{0}{1}_{2:04d}".format(result_dir, test_file, counter)
+    logfile_name = "{0}{1}_{2:04d}_{3:03d}".format(result_dir, test_file, counter, test_time)
     subprocess.call(["touch", logfile_name])
     with open(logfile_name, 'r+') as logfile:
         os.chdir(test_dir)
@@ -54,6 +70,22 @@ def run_test(test_file, counter, verbose = False, cur_dir = os.getcwd()):
         with open(logfile_name, 'r') as logfile:
             for line in logfile:
                 print line,
-    # move the test file to unclassified
-    subprocess.call(["mv", test_dir + test_file, test_unclassify_dir])
+    if test_kind == "new":
+        # move the test file to unclassified
+        subprocess.call(["mv", test_dir + test_file, test_unclassify_dir])
+    elif test_time != 1 and (test_kind == "passed" or test_kind == "failed"):
+        # Compare the previous test result and current test result, if find different move the
+        # the test to unclassified.
+        result_dir = "./results/" + test_kind + "/"
+        file_pre = "{0}_{1:04d}_{2:03d}".format(test_file, counter, test_time-1)
+        if file_pre in os.listdir(result_dir):
+            fp = open(result_dir + file_pre, 'r')
+        fc = open(logfile_name, 'r')
+        # check diff
+        for linep, linec in zip(fp, fc):
+            if linep != linec:
+                # find diff, move test file to unclassified
+                subprocess.call(["mv", logfile_name, cur_dir + "/results/unclassified/"])
+                subprocess.call(["mv", test_dir + test_file, cur_dir + "/test/unclassified"])
+
 

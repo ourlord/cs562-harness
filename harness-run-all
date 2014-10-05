@@ -9,24 +9,29 @@ import os, optparse
 from lib.History import History
 from lib import Harness
 
-test_dir = "./test/new/"
+test_dir = ["./test/new/", "./test/passed/", "./test/failed/", "./test/unclassified/"]
 def main():
     Harness.initRunAllTest(os.getcwd())
     # History logging here
     h = History("RUN_ALL")
     h.log("Run all the test.")
+    test_list = []
     p = optparse.OptionParser(description='Run all test under test/new/.' 
         ' Record result in results/. Put all runned test files to test/unclassified/.')
     p.add_option('-V', '--verbose', action='store_true', dest='verbose', \
             help='turn on the verbose output')
     options, arguments = p.parse_args()
-    if os.listdir(test_dir) == []:
-        print "===== No test can be run ======"
+    for td in test_dir:
+        for f in os.listdir(td):
+            tk = td[7:len(td)-1]
+            test_list.append((f, tk))
+    if test_list == []:
+        print "===== No test to run ====="
         return
-    for f in os.listdir(test_dir):
+    for (f, td) in test_list:
         print "===== Run test: {0} ======".format(f)
         h.log("TEST RUN: \"{0}\"".format(f))
-        Harness.run_test(f, h.getCounter(), options.verbose, os.getcwd())
-    
+        Harness.run_test(f, h.getCounter(), td, options.verbose, os.getcwd())
+
 if __name__ == '__main__':
     main()

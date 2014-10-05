@@ -9,7 +9,7 @@ import os, re, optparse
 from lib.History import History
 from lib import Harness
 
-test_dir = "./test/new/"
+test_dir = ["./test/new/", "./test/passed/", "./test/failed/", "./test/unclassified/"]
 def main():
     test_list = []
     h = History('RUN_TEST')
@@ -26,21 +26,23 @@ def main():
             r = re.compile(options.regex)
         except:
             p.error("Incorrect regular expression taken!")
-        for f in os.listdir(test_dir):
-            if r.match(f):
-                if f not in test_list:
-                    test_list.append(f)
+        for td in test_dir:
+            for f in os.listdir(td):
+                if r.match(f):
+                    if f not in test_list:
+                        test_list.append(f, td)
     for arg in arguments:
-        if arg in os.listdir(test_dir):
-            if arg not in test_list:
-                test_list.append(arg)
+        for td in test_dir:
+            if arg in os.listdir(td):
+                if arg not in test_list:
+                    test_list.append(arg, td)
     if test_list == []:
         print "====== No test found ====="
         return
-    for test in test_list:
+    for (test, td) in test_list:
         print "====== Run test: {0} =====".format(test)
         h.log("TEST RUN: \"{0}\"".format(test))
-        Harness.run_test(test, h.getCounter(), options.verbose, os.getcwd())
+        Harness.run_test(test, h.getCounter(), td[7:len(td)-1], options.verbose, os.getcwd())
 
 if __name__ == '__main__':
     main()
